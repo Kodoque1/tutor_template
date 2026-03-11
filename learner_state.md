@@ -59,3 +59,37 @@
 | Événement | Détail | Tour |
 |-----------|--------|------|
 | —         | —      | —    |
+
+---
+
+## S7 · Livrables Investigation (Phase 2)
+
+<!-- Fichier = investigation_[VARIABLE_PILOTE]_v[N].md situé dans /investigations/ -->
+
+| Livrable | Statut | Tour | Fichier | Notes |
+|----------|--------|------|---------|-------|
+| —        | —      | —    | —       | —     |
+
+---
+
+## S8 · Questions Méthodologiques (Comportement transversal)
+
+<!-- Accumulator pour questions de nomenclature et tooling. Permet d'identifier patterns de lacune conceptuelle. -->
+
+| Question | Type | Réponse courte | Tour | Contexte Phase |
+|----------|------|---|------|--------|
+| —        | —    | — | —    | —      |
+
+---
+
+## S9 · Score de complétude 0.8 (Cartographie Macro)
+
+<!-- Score 0–4 basé sur les 4 éléments requis :
+     (1) composant prioritaire, (2) flux bout-en-bout,
+     (3) invariant explicite, (4) hypothèse testable X/Y/Z.
+     Sert à décider Exécuter/Sauter la phase 0.8. -->
+
+| Tour | Score (0-4) | Composant | Flux | Invariant | Hypothèse X/Y/Z | Décision (Exécuter/Sauter) | Justification courte |
+|------|-------------|-----------|------|-----------|-----------------|----------------------------|----------------------|
+| 1    | 3           | ✅        | ✅   | ✅        | ❌              | Exécuter                   | Hypothèse non formulée au format X/Y/Z ; cartographie partielle à compléter avant Phase 1. |
+| —    | —           | —         | —    | —         | —               | —                          | —                    |
