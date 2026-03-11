@@ -93,3 +93,14 @@
 |------|-------------|-----------|------|-----------|-----------------|----------------------------|----------------------|
 | 1    | 3           | ✅        | ✅   | ✅        | ❌              | Exécuter                   | Hypothèse non formulée au format X/Y/Z ; cartographie partielle à compléter avant Phase 1. |
 | —    | —           | —         | —    | —         | —               | —                          | —                    |
+
+---
+
+## S10 · Transfert du questionnement
+
+<!-- Suivi léger de la capacité de l'apprenant à produire la prochaine question utile.
+     Ne pas transformer cette section en notation scolaire ; elle sert à calibrer le niveau d'étayage du tuteur. -->
+
+| Tour | Phase | Question proposée par l'apprenant | Ouvre sur observation/test ? | Réduit l'espace des causes ? | Niveau d'autonomie |
+|------|-------|------------------------------------|------------------------------|------------------------------|--------------------|
+| —    | —     | —                                  | —                            | —                            | —                  |

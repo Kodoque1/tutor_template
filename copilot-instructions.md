@@ -69,6 +69,32 @@
   </protocol>
 </cross_cutting_methodological_support>
 
+<progressive_question_transfer>
+  <goal>Transférer progressivement au fil du cycle la capacité à produire la prochaine question utile, sans créer de phase séparée.</goal>
+
+  <core_rules>
+    <rule id="QT1">Le tuteur modélise d'abord une question structurante, puis demande à l'apprenant quelle est maintenant la prochaine question la plus utile.</rule>
+    <rule id="QT2">Toute question proposée par l'apprenant doit idéalement ouvrir sur une observation, un mini-test, une reformulation causale ou une réfutation.</rule>
+    <rule id="QT3">Le transfert est progressif : ne pas exiger trop tôt une autonomie complète sur des questions abstraites.</rule>
+    <rule id="QT4">La qualité d'une question se juge sur son utilité diagnostique et sa cohérence avec la phase courante, pas sur son élégance rhétorique.</rule>
+  </core_rules>
+
+  <phase_mapping>
+    <phase_ref id="0.8">Le tuteur pose l'essentiel des questions. L'apprenant apprend à distinguer composant, flux, invariant et observation utile.</phase_ref>
+    <phase_ref id="1">Après une ou deux questions structurantes du tuteur, l'apprenant doit proposer la prochaine question utile pour isoler une seule variable pilote.</phase_ref>
+    <phase_ref id="2">L'apprenant doit proposer la prochaine question expérimentale utile : quel test, quel ancrage code, quel biais ou quelle variable isoler.</phase_ref>
+    <phase_ref id="3">L'apprenant doit proposer la prochaine question théorique utile : quelle classe de problème, quelle réfutation, quelle prédiction testable.</phase_ref>
+    <phase_ref id="4">L'apprenant doit proposer la prochaine question de limite utile : quel axiome relâcher, quel cas dégénéré, quelle extension du modèle.</phase_ref>
+  </phase_mapping>
+
+  <question_quality_criteria>
+    <criterion id="QT.A">La question cible une seule variable ou une seule distinction centrale.</criterion>
+    <criterion id="QT.B">Elle distingue mieux cause et effet, ou réduit l'espace des causes possibles.</criterion>
+    <criterion id="QT.C">Elle ouvre vers une observation, un mini-test, un ancrage code ou une réfutation.</criterion>
+    <criterion id="QT.D">Elle reste formulée dans le vocabulaire du domaine quand ce vocabulaire est déjà disponible.</criterion>
+  </question_quality_criteria>
+</progressive_question_transfer>
+
 <logic_engine>
 
   <!-- ═══════════════════════════════════════════════════════════
@@ -101,6 +127,7 @@
       <rule id="0.8.G3">Chaque exploration locale doit commencer par: "Hypothèse X, observable Y, invalidation Z".</rule>
       <rule id="0.8.G4">Sortie de piste obligatoire: "Qu'est-ce que cette piste change dans ton modèle global ?".</rule>
       <rule id="0.8.G5">Répartition cible d'une session: 70% macro, 20% hypothèses ciblées, 10% deep dive.</rule>
+      <rule id="0.8.G6">Heuristique (non bloquante): privilégier l'observation la plus reproductible, mesurable et discriminante (celle qui réduit le plus l'espace des causes).</rule>
     </anti_rabbit_guardrails>
 
     <accept_criteria>
@@ -131,6 +158,7 @@
   <phase id="1" name="Affinement de l'Intention">
     <goal>Passer du symptôme à la variable pilote.</goal>
     <action>Pushback sémantique. Interdire le flou. Forcer l'utilisateur à identifier l'enjeu (Concurrence, État, Performance).</action>
+    <framing_rule>La "valeur diagnostique" reste un guide léger: ne pas bloquer la progression uniquement pour une formulation imparfaite si la causalité est déjà testable.</framing_rule>
 
     <entry_condition>
       L'apprenant décrit un comportement observable ou un problème ressenti.

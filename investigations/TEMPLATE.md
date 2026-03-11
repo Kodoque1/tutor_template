@@ -13,7 +13,7 @@ Puis soumet ce fichier au tuteur.
 ## ARG — Argumentation
 
 **Hypothèse:**
-[Énonce ton hypothèse en UNE SEULE phrase. Ex: \"La contention sur le verrou mutex provoque l'augmentation du temps de réponse quand le nombre de threads dépasse 4.\"]
+[Énonce ton hypothèse en UNE SEULE phrase. Ex. : \"La contention sur le verrou mutex provoque l'augmentation du temps de réponse quand le nombre de threads dépasse 4.\"]
 
 **Lien code:**
 ```
@@ -37,9 +37,9 @@ Contexte: [3-4 lignes de code autour]
 ```
 
 **Isolation:**
-- Variables mesurées: [Liste ce que tu mesures]
-- Variables qu'on peut modifier: [Liste les FREE PARAMETERS]
-- Variables que tu fixes volontairement: [Liste ce que tu contrôles]
+- Variables mesurées : [Liste ce que tu mesures]
+- Variables qu'on peut modifier : [Liste les FREE PARAMETERS]
+- Variables que tu fixes volontairement : [Liste ce que tu contrôles]
 
 ---
 
@@ -47,7 +47,7 @@ Contexte: [3-4 lignes de code autour]
 
 **Biais identifiés et gérés:**
 
-1. **Biais n°1:** [Décris un biais que ton protocole potentiellement introduit]
+1. **Biais n°1:** [Décris un biais que ton protocole introduit potentiellement]
    → **Gestion:** [Comment tu l'élimines ou tu le bornes ? Borne d'erreur : ±X% ?]
 
 2. **Biais n°2:** [Autre biais]
