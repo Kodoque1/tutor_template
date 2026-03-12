@@ -1,138 +1,124 @@
-# Guide d'utilisation du Tuteur — Version 2.1
+# Guide d'utilisation du Tuteur — Version 2.3
 
-## Nouveautés
+## Architecture centrale : phases et traçabilité
 
-### 1. Comportement transversal : Ressources Méthodologiques
+Le tuteur commence chaque session par une question d'intention pour choisir le flux :
 
-**Problème résolu :** Les apprenants posent des questions sur la nomenclature (ex. : "Qu'est-ce qu'une contention ?") ou sur l'implémentation technique (ex. : "Comment désactiver les FPS fixes ?") pendant le flux pédagogique.
+> "Qu'est-ce qui t'a amené ici ?"
 
-**Solution :** Un comportement transversal qui :
-- ✅ Répond directement sans bloquer
-- ✅ Replace la réponse dans le contexte de la phase courante
-- ✅ Documente les questions pour calibrage futur
+| Réponse | Flux activé |
+|---|---|
+| Symptôme, bug, comportement inattendu | Standard : 0.8 → 1 → 2 → 3 → 4 |
+| Explorer / comprendre sans problème défini | Exploratoire : E1 → E2 [×N] → E3 |
+| Préparer une présentation ou contribution rapide | Allégé : 0.8 + 1 seulement |
+| Symptôme **ET** volonté de comprendre l'architecture | Hybride : pré-phase E1 (15 min), puis Standard (E1 remplace MAP si complet) |
 
-**Priorité si plusieurs interruptions arrivent dans le même tour :**
-- 1. `TERMINOLOGY` si le vocabulaire empêche de comprendre la question active
-- 2. `TOOLING_HOWTO` si l'apprenant ne peut pas agir, tester ou produire sa preuve
-- 3. `META` si la question porte sur le fonctionnement du tuteur
-- Une seule intervention transversale par tour ; les autres sont différées et tracées dans S8
+**Règle** : ne jamais inférer l'intention depuis la formulation de la question — la demander si ambiguë.
 
-Voir `copilot-instructions.md` bloc `cross_cutting_methodological_support`.
+Le flux standard progresse en 5 phases (0.8 → 1 → 2 → 3 → 4) avec trois mécanismes transversaux :
 
----
+1. **Ressources méthodologiques** — interruptions sans blocage (terminologie, tooling, méta-questions)
+2. **Questions progressives** — transfert de la capacité à générer des questions utiles
+3. **Efficacité d'investigation** — T1 avant T2 avant T3, coût explicite avant engagement
 
-### 2. Gestion des Investigations en Fichiers
-
-**Problème résolu :** Les investigations longues de la phase 2 sont illisibles dans le chat. Difficile de les évaluer rigoureusement.
-
-**Solution :** Investigations soumises en fichiers markdown (`/investigations/`)
-
-#### Structure:
-```
-/investigations/
-├── README.md                              (guide + historique)
-├── TEMPLATE.md                            (template rempli par l'apprenant)
-├── investigation_contention_v1.md
-├── investigation_contention_v2.md
-└── investigation_cache_l2_v1.md
-```
-
-#### Workflow :
-1. **Apprenant** remplit `TEMPLATE.md` → sauvegarde comme `investigation_[VAR]_v1.md`
-2. **Tuteur** examine le fichier, cite: "J'ai examiné investigation_v1.md. Critère 2.C non satisfait."
-3. **Feedback** ajouté via commentaires HTML dans le fichier (pas copiés dans le chat)
-4. **Apprenant** relit son propre fichier, itère localement → `investigation_[VAR]_v2.md`
-5. Versions antérieures conservées pour audit
-
-#### Avantages:
-- ✅ Lisibilité : une investigation = un contexte centralisé
-- ✅ Évaluation rigoureuse : critères appliqués sur le contenu complet
-- ✅ Traçabilité : historique des versions, feedback structuré
-- ✅ Autonomie : l'apprenant relit et itère indépendamment
-
-Voir `investigations/README.md` pour les détails.
+Chaque session est tracée dans `learner_state.md` (sections S1–S10) ; investigations longues (Phase 2) en fichiers séparés.
 
 ---
 
-### 3. Suivi : sections S7 & S8 dans learner_state.md
+## 1. Interruptions méthodologiques (transversal)
 
-**S7 — Livrables Investigation (Phase 2)**
-- Table des investigations soumises
-- Format: `investigation_[VAR]_v[N].md`
-- Statut: Rejeté | En révision | Accepté
+Les apprenants posent des questions hors-phase sur la nomenclature, l'implémentation technique ou le processus tuteur. Le système les traite sans bloquer le flux.
 
-**S8 — Questions Méthodologiques (Comportement transversal)**
-- Accumulation des questions de nomenclature/tooling
-- Type, réponse courte, contexte de phase
-- Permet d'identifier des patterns de lacune conceptuelle
+**Ordre de priorité** (une seule par tour; les autres sont différées à S8) :
+1. **TERMINOLOGY** — vocabulaire qui empêche la compréhension active
+2. **TOOLING_HOWTO** — action ou preuve bloquée (ex. désactiver FPS fixes)
+3. **META** — question sur le processus tuteur lui-même
 
-**S9 — Score de complétude 0.8 (Cartographie Macro)**
-- Score 0–4 sur les 4 éléments requis (Composant, Flux, Invariant, Hypothèse X/Y/Z)
-- Décision tracée : Exécuter ou Sauter la phase 0.8
-- Justification courte pour audit pédagogique
+**Protocole** : Répondre directement, puis recontextualiser ("Comment cela s'articule avec ta Phase [N] ?"). Documenter dans S8 pour audit.
 
-**S10 — Transfert du questionnement**
-- Trace la qualité de la prochaine question proposée par l'apprenant
-- Sert à calibrer l'étayage : question modélisée par le tuteur vs question produite par l'apprenant
-- Indicateurs simples : ouvre sur observation/test ? réduit l'espace des causes ?
+Détail complet : `copilot-instructions.md` → `cross_cutting_methodological_support`
+
+**Régression de phase** : si en Phase N une découverte invalide un modèle construit en Phase M, nommer explicitement la régression ("Ce que tu viens de montrer contredit ton modèle de Phase [M]. On revient en Phase [M] avec cette nouvelle donnée.") et retourner à Phase M — pas à 0.8. Tracer dans S5.
 
 ---
 
-### 4. Phase 0.8 : cartographie macro et anti-rabbit-hole
+## 2. Investigations Phase 2 : fichiers et feedback
 
-**Problème résolu :** Le tuteur et l'apprenant entrent trop tôt dans le détail local (fichier/ligne) sans modèle global de la codebase.
+**Raison du changement** : Les investigations texte-brut dans le chat sont illisibles et difficiles à évaluer rigoureusement.
 
-**Solution :** Une phase de cartographie courte avant la phase 1 qui :
-- ✅ Force une vue système (3 composants structurants + 1 flux + 1 invariant)
-- ✅ Empêche les deep dives prématurés (garde-fous + timebox 12–15 min)
-- ✅ Oriente les échanges vers les notions centrales plutôt que les détails accidentels
+**Solution** : Investigations soumises en fichiers markdown (`/investigations/investigation_[VAR]_v[N].md`) avec feedback intégré (commentaires HTML, non copiés dans le chat).
 
-**Compromis adopté (explicite, non bloquant) :**
-- Heuristique de valeur diagnostique : privilégier l'observation la plus reproductible, mesurable et discriminante.
-- Ce n'est pas un gate strict : si la causalité est déjà testable, on avance sans surcharger la session.
+**Workflow** :
+1. Apprenant remplit `TEMPLATE.md` → sauvegarde comme `investigation_[VAR]_v1.md`
+2. Tuteur vérifie critères 2.A–2.D, ajoute commentaires HTML
+3. Apprenant relit, itère localement → `v2.md`, `v3.md`
+4. Toutes versions conservées pour audit
 
-Voir `copilot-instructions.md` et `response_quality.xml` Phase 0.8.
+**Avantages** : lisibilité centralisée, critères applicables sur le contexte complet, traçabilité, autonomie apprenant.
+
+Détail : `investigations/README.md`
 
 ---
 
-## Architecture globale
+## 3. Traçabilité : S7–S10 dans learner_state.md
 
-```
-copilot-instructions.md
-├── master_instruction (unchanged)
-├── cross_cutting_methodological_support [NOUVEAU]
-├── logic_engine
-│   ├── Phase 0.8 — Cartographie Macro & Anti-Rabbit-Hole [NOUVEAU]
-│   ├── Phase 1 — Affinement
-│   ├── Phase 2 — Investigation & Preuve
-│   │   └── deliverable_management [NOUVEAU]
-│   ├── Phase 3 — Modèle Mental
-│   └── Phase 4 — Pivot
-└── pedagogical_posture (unchanged)
+| Section | Contenu | Utilité |
+|---|---|---|
+| **S7** | Investigations soumises (statut: rejeté/révision/accepté) | Audit Phase 2 |
+| **S8** | Questions méthodologiques (type, réponse, contexte) | Identifier patterns lacunaires |
+| **S9** | Score complétude 0.8 (0–4) + décision Exécuter/Sauter | Décision objective phase 0.8 |
+| **S10** | Qualité questions apprenant (ouvre sur observation ? réduit causes ?) | Calibrage étayage |
+| **S11** | Intentions session suivante (2–3, format : phase courante + actions concrètes) | Reprise immédiate sans reconstruction à froid |
 
-learner_state.md
-├── S1 — Position
-├── S2 — Hints consommés
-├── S3 — Patterns blocage
-├── S4 — Décisions adaptatives
-├── S5 — Modèle mental
-├── S6 — Historique
-├── S7 — Livrables Investigation [NOUVEAU]
-├── S8 — Questions Méthodologiques [NOUVEAU]
-├── S9 — Score complétude 0.8 [NOUVEAU]
-└── S10 — Transfert du questionnement [NOUVEAU]
+---
 
-investigations/ [NOUVEAU]
-├── README.md
-├── TEMPLATE.md
-└── [livrables apprenants]
-```
+## 4. Phase 0.8 : cartographie macro et anti-rabbit-hole
+
+**Objectif** : Construire une vue système avant d'ouvrir le détail. Éviter les deep dives non guidées.
+
+**Livrable requis** (4 éléments) :
+1. **Composant** — 3 éléments structurants
+2. **Flux** — 1 chemin de données/contrôle de bout en bout
+3. **Invariant** — 1 propriété qui reste vraie même si ça casse
+4. **Hypothèse testable** — format : Hypothèse X / Observable Y / Invalidation Z
+
+**Règle de transition** : Autoriser Phase 1 ssi 4 éléments explicités. Sauter 0.8 ssi fournis en < 2 réponses.
+
+**Heuristiques non bloquantes** :
+- **Discriminance** (G6) : privilégier l'observation qui réduit le plus l'espace des causes
+- **Efficacité** (G7) : T1 (log/print) avant T2 (mini-test) avant T3 (refactoring)
+
+Détail complet → `copilot-instructions.md` Phase 0.8, `response_quality.xml` Phase 0.8
+
+---
+
+## 5. Mode exploratoire : E1 → E2 [×N] → E3
+
+**Quand l'activer** : l'apprenant veut comprendre une codebase sans problème terminal défini (onboarding, discovery, préparation à contribution).
+
+**Différence clé avec le flux standard** : pas de variable pilote à isoler, pas de reject_triggers actifs — toute observation qui structure la compréhension a de la valeur.
+
+| Phase | Durée indicative | Objectif | Critère minimal |
+|---|---|---|---|
+| **E1** — Cartographie libre | 15–20 min | Identifier premiers chemins et composants structurants | 1 chemin + 1 composant central + 1 question à approfondir |
+| **E2** — Excavation ciblée | 10–15 min (×3–5) | Approfondir une arête choisie par l'apprenant | 1 observation + 1 mini-modèle local |
+| **E3** — Synthèse | 10–15 min | Nommer le pattern central et la philosophie architecturale | Pattern nommé + 2 comportements E2 expliqués par ce pattern |
+
+**Questions types du tuteur en E2** :
+- "Qu'observes-tu au moment où [X] se produit ?"
+- "Ce comportement est-il une contrainte de conception ou une conséquence accidentelle ?"
+- "Où ce composant transmet-il la responsabilité à un autre ?"
+- "Quelle est la prochaine arête que tu veux explorer depuis ici ?"
+
+**Bascule vers flux standard** : si en E3 l'apprenant détecte un comportement anormal, basculer vers Phase 0.8 avec la carte E1/E2 comme point de départ — elle remplace le MAP_1/MAP_2/MAP_3 qui auraient été construits normalement.
+
+**Traçabilité allégée** : S1 (position) et S5 (modèle mental) seulement. Pas de S9 ni S10.
 
 ---
 
 ## Pour les tuteurs
 
-### Script d'ouverture — phase 0.8 (5 questions max)
+### Phase 0.8 : script d'ouverture (5 questions max)
 
 Utiliser ce script quand l'apprenant démarre sur une nouvelle codebase ou une nouvelle zone fonctionnelle.
 
@@ -154,85 +140,58 @@ Utiliser ce script quand l'apprenant démarre sur une nouvelle codebase ou une n
 - Timebox locale de 12–15 min ; sans signal fort, retour au modèle global : "Qu'est-ce que cette piste change dans ton modèle du système ?"
 - En cas de doute entre plusieurs observations, choisir celle qui élimine le plus de causes possibles.
 
-### Contraste utile : exploration nominale vs investigation pathologique
-
-**En nominal (avant les limites)**
-- But : comprendre le fonctionnement standard de la codebase.
-- Questions typiques :
-	- "Quel est le cycle normal d'une frame ?"
-	- "Quel composant produit ce changement d'état ?"
-	- "Qu'est-ce que tu observes, et qu'est-ce qui est encore une supposition ?"
-- Attendu : flux, rôles des composants, invariants simples, séparation observation/interprétation.
-
-**En pathologique (quand ça casse)**
-- But : expliquer une déviation du fonctionnement standard.
-- Questions typiques :
-	- "Qu'est-ce qui change exactement au moment où ça casse ?"
-	- "Quelle variable est cause possible, et quel élément n'est qu'un effet ?"
-	- "Quelle observation élimine le plus de causes possibles ?"
-- Attendu : variable pilote, hiérarchie causale, observation diagnostique, hypothèse testable.
-
-**Exemple moteur physique 2D**
-- Nominal :
-	- Cas : un corps tombe sur un sol fixe.
-	- Bonne question : "Qu'observes-tu avant le contact, au contact, puis après le contact ?"
-	- Relance utile : "Quelle est ta prochaine question pour distinguer détection et résolution ?"
-- Pathologique :
-	- Cas : la simulation devient instable avec beaucoup de collisions.
-	- Bonne question : "Qu'est-ce qui change dans l'état du système quand l'instabilité apparaît ?"
-	- Relance utile : "Quelle observation te permettrait de distinguer un problème de `dt` d'un problème de solveur ?"
-
-**Point commun dans les deux cas**
-- Le tuteur commence par une question structurante.
-- L'apprenant produit ensuite une observation ou un mini-test.
-- Le tuteur demande ensuite : "Quelle est maintenant la prochaine question la plus utile ?"
-- C'est ce transfert progressif qui entraîne l'apprenant à se poser lui-même de meilleures questions.
-
 ### Protocole de transfert progressif du questionnement
 
-- **Phase 0.8** : le tuteur pose l'essentiel des questions ; l'apprenant apprend à distinguer composant, flux, invariant et observation utile.
-- **Phase 1** : après une ou deux questions du tuteur, l'apprenant doit proposer la prochaine question utile pour isoler une seule variable pilote.
-- **Phase 2** : l'apprenant doit proposer la prochaine question expérimentale utile (test, ancrage code, biais, variable à isoler).
-- **Phase 3** : l'apprenant doit proposer la prochaine question théorique utile (classe de problème, réfutation, prédiction testable).
-- **Phase 4** : l'apprenant doit proposer la prochaine question de limite utile (axiome à relâcher, cas dégénéré, extension du modèle).
+Progression par phase de la responsabilité apprenant pour générer la prochaine question utile :
 
-**Critères simples d'une bonne question proposée par l'apprenant**
-- Elle cible une seule variable ou une seule distinction centrale.
-- Elle réduit l'espace des causes possibles.
-- Elle ouvre vers une observation, un mini-test, un ancrage code ou une réfutation.
-- Elle reste dans le vocabulaire du domaine quand ce vocabulaire est disponible.
+- **Phase 0.8** : tuteur pose questions ; apprenant apprend à distinguer composant, flux, invariant
+- **Phase 1–4** : apprenant génère la prochaine question (isoler variable pilote → expérimentale → théorique → limite)
 
-### Intégrer une réponse méthodologique (transversal)
+**Critères d'une bonne question** : cible une seule variable, réduit l'espace des causes, ouvre sur observation/test/réfutation, formulée dans le vocabulaire du domaine, coût d'investigation minimisé (T1→T2→T3).
 
-```markdown
-**Ta question:** Comment désactiver les FPS fixes en C++ ?
+### Clôture de session : protocole S11
 
-**Réponse:**
-[...réponse technique...]
+En fin de session (annonce de départ ou 60+ min sans nouveau deliverable) :
 
-**Intégration:** À incorporer dans ton script de test Phase 2.
-Comment cela s'articule avec la variable pilote que tu investigues actuellement ?
+1. Résumer en 1 phrase ce qui a été établi (phase atteinte, modèle courant)
+2. Formuler 2–3 intentions concrètes pour la session suivante (ex: "Phase 2, tester l'hypothèse H")
+3. Écrire dans `learner_state.md` S11 : `S11 | [date] | Phase : [N] | Établi : [...] | Intentions : (a) [...] (b) [...] (c) [...]`
+
+S11 est lu en premier à la session suivante, avant la question d'intention.
+
+### Efficacité d'investigation : T1, T2, T3
+
+Une question reste coûteuse si son investigation l'est. **Règle** : épuiser T1 (< 2 min : logs, print, compteur) avant T2 (5–15 min : mini-test ciblé) avant T3 (> 15 min : refactoring). Ne monter de tier que si le tier actuel est clairement non discriminant.
+
+**Guidage tuteur** : " Existe-t-il déjà dans les logs (T1) ce qu'il te faudrait ? " ou " Quelle version minimale de ce test suffit ? "
+
+**Exemple** : "Je vais mesurer l'énergie sur 10k frames" (T3 direct) vs "D'abord : le `dt` affiché est constant ?" (T1) → mini-test fixe (T2) → banc complet (T3).
+
+---
+
+## Procédures pour le tuteur
+
+### Répondre à une interruption méthodologique
+
+Répondre directement ("D'abord, [réponse]"), puis recontextualiser la réponse dans la phase active. Documenter dans S8 (`learner_state.md`) :
+
+```
+| Désactiver FPS fixes | TOOLING_HOWTO | [résumé réponse] | Tour N | Phase M |
 ```
 
-Puis ajouter à `learner_state.md` S8:
-
-| Question | Type | Réponse | Tour | Phase |
-|----------|------|---------|------|-------|
-| Désactiver FPS fixes | TOOLING_HOWTO | [Lien vers réponse] | 2 | Phase 2 |
+Exemple : "Comment désactiver les FPS fixes en C++ ?" → [réponse technique] → "À incorporer dans ton test Phase 2. Comment cela change ta variable pilote ?"
 
 ### Évaluer une Investigation Phase 2
 
-1. Consulter `investigations/investigation_[VAR]_v1.md`
-2. Appliquer critères 2.A–2.D indépendamment
-3. Ajouter commentaires HTML pour feedback
-4. **Ne PAS** copier/coller dans le chat
-5. Mettre à jour `learner_state.md` S7 avec le statut
+1. Consulter `investigations/investigation_[VAR]_v[N].md`
+2. Appliquer critères 2.A–2.D (hypothèse, observable, test, auto-critique)
+3. Ajouter commentaires HTML (pas de copie chat)
+4. Mettre à jour S7 (`learner_state.md`) : Rejeté | Révision | Accepté
 
-Exemple de feedback:
-
-```markdown
-<!-- [2.C] AUTO-CRITIQUE insuffisante. Tu identifies "GC" mais pas de borne d'erreur.
-Remplace par: "Mon test mesure aussi le GC (overhead ~5-10% hors de mon hypothèse principal)." -->
+Feedback compact :
+```
+<!-- [2.C] AUTO-CRITIQUE absente : mesure GC mais pas borne.
+Reformule : overhead GC ~5-10% hors hypothèse principale. -->
 ```
 
 ---
@@ -241,9 +200,11 @@ Remplace par: "Mon test mesure aussi le GC (overhead ~5-10% hors de mon hypothè
 
 - [ ] Lire `copilot-instructions.md` + `response_quality.xml` en parallèle
 - [ ] Lire `learner_state.md` pour restaurer l'état et les patterns RCA
-- [ ] Décider Exécuter/Sauter la phase 0.8 selon les critères de complétude (4 éléments)
+- [ ] Si S11 renseigné : lire S11 en priorité pour reprendre les intentions de la session précédente
+- [ ] Poser la question d'intention : "Qu'est-ce qui t'a amené ici ?" → choisir flux (standard / exploratoire / allégé)
+- [ ] Si flux standard : décider Exécuter/Sauter la phase 0.8 selon les critères de complétude (4 éléments)
+- [ ] Si mode exploratoire : activer S1 + S5 seulement, lancer E1
 - [ ] Initialiser `investigations/TEMPLATE.md` si première session Phase 2
-- [ ] S'approprier le comportement transversal méthodologique + les phases 0.8 + 1–4 selon le contexte de l'apprenant
 
 ---
 
